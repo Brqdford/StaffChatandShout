@@ -23,7 +23,7 @@ import org.slf4j.Logger;
   name = "StaffChat",
   version = "1.0",
   description = "staffchat",
-  authors = {"Brqdford"}
+  authors = {"STG_Allen"}
 )
 public class SimpleAnnounce {
 
@@ -62,9 +62,8 @@ public class SimpleAnnounce {
             .build();
 
 
-    CommandManager manager2 = proxyServer.getCommandManager();
-    manager2.register(
-            manager2.metaBuilder("shout").aliases("s").build(),
+    manager.register(
+            manager.metaBuilder("shout").aliases("s").build(),
             new BrigadierCommand(shout)
     );
   }
