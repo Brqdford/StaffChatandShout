@@ -12,10 +12,9 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
-import io.github.stgallen.simpleannounce.command.BroadcastCommand;
-import io.github.stgallen.simpleannounce.command.TitleCommand;
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.LuckPermsProvider;
+import io.github.stgallen.simpleannounce.command.AdminChannel;
+import io.github.stgallen.simpleannounce.command.StaffChat;
+import io.github.stgallen.simpleannounce.command.Shout;
 import org.slf4j.Logger;
 
 @Plugin(
@@ -34,21 +33,19 @@ public class SimpleAnnounce {
   private ProxyServer proxyServer;
 
   @Inject
-  private BroadcastCommand broadcastCommand;
+  private StaffChat broadcastCommand;
 
   @Inject
-  private TitleCommand titleCommand;
+  private Shout titleCommand;
   @Subscribe
   public void onProxyInitialization(ProxyInitializeEvent event) {
+    CommandManager manager = proxyServer.getCommandManager();
     LiteralCommandNode<CommandSource> broadcast = LiteralArgumentBuilder.<CommandSource>literal("staffchat")
       .requires(ctx -> ctx.hasPermission("staffchat.use"))
       .then(RequiredArgumentBuilder.<CommandSource, String>argument("message", StringArgumentType.greedyString())
         .executes(broadcastCommand::execute)
         .build())
       .build();
-
-
-    CommandManager manager = proxyServer.getCommandManager();
     manager.register(
       manager.metaBuilder("staffchat").aliases("sc").build(),
       new BrigadierCommand(broadcast)
@@ -60,11 +57,10 @@ public class SimpleAnnounce {
                     .executes(titleCommand::execute)
                     .build())
             .build();
-
-
     manager.register(
             manager.metaBuilder("shout").aliases("s").build(),
             new BrigadierCommand(shout)
     );
+    new AdminChannel(this, proxyServer);
   }
 }
